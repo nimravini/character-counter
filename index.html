@@ -6,7 +6,13 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
   />
+  <meta name="theme-color" content="#10131a" />
+  <meta name="description" content="A character counter with find and replace." />
   <title>Character Counter + Find & Replace</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+
   <style>
     :root {
       --bg: #10131a;
@@ -568,6 +574,12 @@
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', requestStatsPositionSync);
       window.visualViewport.addEventListener('scroll', requestStatsPositionSync);
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js', { scope: './' }).catch(() => {});
+      });
     }
 
     syncStatsPosition();
