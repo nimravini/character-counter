@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+  />
+  <title>Character Counter + Find & Replace</title>
+  <style>
+    :root {
+      --bg: #10131a;
+      --panel: #181d27;
+      --panel-2: #202635;
+      --text: #f5f7fb;
+      --muted: #aeb7c8;
+      --accent: #8fd3ff;
+      --accent-2: #c9a7ff;
+      --border: rgba(255, 255, 255, 0.12);
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+      --stats-height: 86px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(143, 211, 255, 0.16), transparent 32rem),
+        radial-gradient(circle at bottom right, rgba(201, 167, 255, 0.13), transparent 30rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    html {
+      scroll-padding-top: calc(var(--stats-height) + 22px);
+    }
+
+    body {
+      min-height: 100dvh;
+      padding:
+        calc(var(--stats-height) + max(14px, env(safe-area-inset-top)) + 12px)
+        clamp(14px, 3vw, 28px)
+        clamp(14px, 3vw, 28px);
+    }
+
+    .app {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    header {
+      display: grid;
+      gap: 6px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.55rem, 5vw, 2.45rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .intro {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .fixed-stats {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      width: calc(100vw - 24px);
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(24, 29, 39, 0.96);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transform: translate3d(12px, 10px, 0);
+      transition: box-shadow 160ms ease, border-color 160ms ease;
+      will-change: transform, width;
+    }
+
+    body.keyboard-docked .fixed-stats {
+      border-color: rgba(143, 211, 255, 0.42);
+      box-shadow:
+        0 12px 34px rgba(0, 0, 0, 0.52),
+        0 0 0 1px rgba(143, 211, 255, 0.10);
+    }
+
+    .stat {
+      min-width: 0;
+      padding: 12px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: clamp(1.1rem, 4vw, 1.75rem);
+      font-weight: 850;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(24, 29, 39, 0.82);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    input,
+    textarea,
+    button {
+      font: inherit;
+      font-size: 16px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    input {
+      min-height: 44px;
+      padding: 10px 12px;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: rgba(143, 211, 255, 0.78);
+      box-shadow: 0 0 0 4px rgba(143, 211, 255, 0.13);
+      background: #252c3c;
+    }
+
+    button {
+      min-height: 44px;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 14px;
+      color: #08111c;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-weight: 850;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 120ms ease, filter 120ms ease;
+    }
+
+    button:hover {
+      filter: brightness(1.05);
+    }
+
+    button:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .editor-wrap {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+    }
+
+    .editor-label-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    textarea {
+      min-height: 54dvh;
+      max-height: 68dvh;
+      resize: vertical;
+      padding: 14px;
+      line-height: 1.55;
+      tab-size: 2;
+      scroll-margin-top: calc(var(--stats-height) + 22px);
+    }
+
+    .message {
+      min-height: 1.35em;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .find-replace {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      padding: 14px;
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .actions {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding:
+          calc(var(--stats-height) + max(10px, env(safe-area-inset-top)) + 10px)
+          12px
+          12px;
+      }
+
+      .fixed-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        padding: 8px;
+        border-radius: 16px;
+      }
+
+      .stat {
+        padding: 8px 6px;
+        border-radius: 12px;
+        text-align: center;
+      }
+
+      .stat-label {
+        margin-bottom: 3px;
+        font-size: 0.62rem;
+        letter-spacing: 0.04em;
+      }
+
+      .stat-value {
+        font-size: clamp(1rem, 5vw, 1.3rem);
+      }
+
+      .find-replace {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        align-items: stretch;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      textarea {
+        min-height: 58dvh;
+        max-height: none;
+      }
+
+      body.keyboard-docked textarea {
+        padding-bottom: calc(14px + var(--stats-height));
+      }
+    }
+
+    @media (max-width: 390px) {
+      .fixed-stats {
+        gap: 5px;
+        padding: 7px;
+      }
+
+      .stat {
+        padding: 7px 4px;
+      }
+
+      .stat-label {
+        font-size: 0.56rem;
+      }
+
+      .stat-value {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="fixed-stats" id="fixedStats" aria-label="Text counters">
+    <div class="stat">
+      <span class="stat-label">Chars</span>
+      <span class="stat-value" id="charCount">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Words</span>
+      <span class="stat-value" id="wordCount">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Lines</span>
+      <span class="stat-value" id="lineCount">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Matches</span>
+      <span class="stat-value" id="matchCount">0</span>
+    </div>
+  </section>
+
+  <main class="app">
+    <header>
+      <h1>Character Counter</h1>
+      <p class="intro">Paste or type text below. Spaces and line breaks are included in the main character count.</p>
+    </header>
+
+    <section class="panel">
+      <div class="editor-wrap">
+        <div class="editor-label-row">
+          <span>Text box</span>
+          <span id="statusText" aria-live="polite">Ready.</span>
+        </div>
+
+        <textarea id="textInput" spellcheck="true" placeholder="Paste your text here..."></textarea>
+
+        <div class="message">
+          Tip: the character count uses the text exactly as the browser stores it, so spaces, punctuation, emojis, tabs, and line breaks are counted.
+        </div>
+      </div>
+
+      <div class="find-replace" aria-label="Find and replace controls">
+        <label>
+          Find
+          <input id="findInput" type="text" placeholder="Text to find" autocomplete="off" />
+        </label>
+
+        <label>
+          Replace with
+          <input id="replaceInput" type="text" placeholder="Replacement text" autocomplete="off" />
+        </label>
+
+        <div class="actions">
+          <button id="replaceNextButton" type="button">Replace next</button>
+          <button id="replaceAllButton" type="button">Replace all</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const fixedStats = document.getElementById('fixedStats');
+    const textInput = document.getElementById('textInput');
+    const findInput = document.getElementById('findInput');
+    const replaceInput = document.getElementById('replaceInput');
+    const replaceNextButton = document.getElementById('replaceNextButton');
+    const replaceAllButton = document.getElementById('replaceAllButton');
+    const charCount = document.getElementById('charCount');
+    const wordCount = document.getElementById('wordCount');
+    const lineCount = document.getElementById('lineCount');
+    const matchCount = document.getElementById('matchCount');
+    const statusText = document.getElementById('statusText');
+
+    let statsFrame = null;
+
+    function requestStatsPositionSync() {
+      if (statsFrame) {
+        cancelAnimationFrame(statsFrame);
+      }
+
+      statsFrame = requestAnimationFrame(syncStatsPosition);
+    }
+
+    function syncStatsPosition() {
+      statsFrame = null;
+
+      const visualViewport = window.visualViewport;
+      const viewportWidth = visualViewport ? visualViewport.width : window.innerWidth;
+      const viewportHeight = visualViewport ? visualViewport.height : window.innerHeight;
+      const viewportOffsetTop = visualViewport ? visualViewport.offsetTop : 0;
+      const viewportOffsetLeft = visualViewport ? visualViewport.offsetLeft : 0;
+
+      const margin = viewportWidth <= 760 ? 8 : 12;
+      const barHeight = Math.ceil(fixedStats.getBoundingClientRect().height);
+      const barWidth = Math.min(980, Math.max(0, viewportWidth - margin * 2));
+      const left = viewportOffsetLeft + Math.max(margin, (viewportWidth - barWidth) / 2);
+
+      const activeElement = document.activeElement;
+      const typingElementIsFocused =
+        activeElement === textInput ||
+        activeElement === findInput ||
+        activeElement === replaceInput;
+
+      const keyboardLooksOpen =
+        visualViewport &&
+        window.innerHeight - visualViewport.height > 120;
+
+      const shouldDockAboveKeyboard = typingElementIsFocused && keyboardLooksOpen;
+
+      const top = shouldDockAboveKeyboard
+        ? viewportOffsetTop + viewportHeight - barHeight - margin
+        : viewportOffsetTop + margin;
+
+      document.documentElement.style.setProperty('--stats-height', `${barHeight}px`);
+      document.body.classList.toggle('keyboard-docked', shouldDockAboveKeyboard);
+
+      fixedStats.style.width = `${Math.round(barWidth)}px`;
+      fixedStats.style.transform = `translate3d(${Math.round(left)}px, ${Math.round(Math.max(margin, top))}px, 0)`;
+    }
+
+    function countMatches(text, needle) {
+      if (!needle) return 0;
+
+      let count = 0;
+      let position = 0;
+
+      while (true) {
+        const found = text.indexOf(needle, position);
+        if (found === -1) break;
+
+        count += 1;
+        position = found + needle.length;
+      }
+
+      return count;
+    }
+
+    function updateCounts() {
+      const text = textInput.value;
+      const findText = findInput.value;
+      const trimmed = text.trim();
+
+      charCount.textContent = text.length.toLocaleString();
+      wordCount.textContent = trimmed ? trimmed.split(/\s+/).length.toLocaleString() : '0';
+      lineCount.textContent = text ? text.split('\n').length.toLocaleString() : '0';
+      matchCount.textContent = countMatches(text, findText).toLocaleString();
+
+      requestStatsPositionSync();
+    }
+
+    function setStatus(message) {
+      statusText.textContent = message;
+    }
+
+    function replaceNext() {
+      const text = textInput.value;
+      const findText = findInput.value;
+      const replacement = replaceInput.value;
+
+      if (!findText) {
+        setStatus('Add something to find first.');
+        return;
+      }
+
+      const startFrom = textInput.selectionEnd || 0;
+      let foundAt = text.indexOf(findText, startFrom);
+
+      if (foundAt === -1 && startFrom > 0) {
+        foundAt = text.indexOf(findText, 0);
+      }
+
+      if (foundAt === -1) {
+        setStatus('No matches found.');
+        updateCounts();
+        return;
+      }
+
+      textInput.value =
+        text.slice(0, foundAt) +
+        replacement +
+        text.slice(foundAt + findText.length);
+
+      const newCursorPosition = foundAt + replacement.length;
+
+      textInput.focus();
+      textInput.setSelectionRange(newCursorPosition, newCursorPosition);
+
+      setStatus('Replaced one match.');
+      updateCounts();
+    }
+
+    function replaceAll() {
+      const text = textInput.value;
+      const findText = findInput.value;
+      const replacement = replaceInput.value;
+
+      if (!findText) {
+        setStatus('Add something to find first.');
+        return;
+      }
+
+      const matches = countMatches(text, findText);
+
+      if (!matches) {
+        setStatus('No matches found.');
+        updateCounts();
+        return;
+      }
+
+      textInput.value = text.split(findText).join(replacement);
+
+      textInput.focus();
+      setStatus(`Replaced ${matches.toLocaleString()} ${matches === 1 ? 'match' : 'matches'}.`);
+      updateCounts();
+    }
+
+    function syncAfterKeyboardAnimation() {
+      requestStatsPositionSync();
+      setTimeout(requestStatsPositionSync, 80);
+      setTimeout(requestStatsPositionSync, 180);
+      setTimeout(requestStatsPositionSync, 320);
+    }
+
+    textInput.addEventListener('input', () => {
+      updateCounts();
+      setStatus('Counting live.');
+    });
+
+    findInput.addEventListener('input', () => {
+      updateCounts();
+      setStatus(findInput.value ? 'Find text updated.' : 'Ready.');
+    });
+
+    replaceInput.addEventListener('input', () => {
+      setStatus('Replacement text updated.');
+      requestStatsPositionSync();
+    });
+
+    replaceNextButton.addEventListener('click', replaceNext);
+    replaceAllButton.addEventListener('click', replaceAll);
+
+    [textInput, findInput, replaceInput].forEach((element) => {
+      element.addEventListener('focus', syncAfterKeyboardAnimation);
+      element.addEventListener('blur', syncAfterKeyboardAnimation);
+    });
+
+    window.addEventListener('resize', requestStatsPositionSync);
+    window.addEventListener('orientationchange', syncAfterKeyboardAnimation);
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', requestStatsPositionSync);
+      window.visualViewport.addEventListener('scroll', requestStatsPositionSync);
+    }
+
+    syncStatsPosition();
+    updateCounts();
+  </script>
+</body>
+</html>
