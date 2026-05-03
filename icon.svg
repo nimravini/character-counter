@@ -1,26 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#8fd3ff" />
-      <stop offset="100%" stop-color="#c9a7ff" />
-    </linearGradient>
-  </defs>
+  <rect width="512" height="512" rx="112" fill="#4f6fd6"/>
 
-  <rect width="512" height="512" rx="116" fill="#10131a" />
-  <rect x="72" y="72" width="368" height="368" rx="88" fill="#181d27" stroke="url(#g)" stroke-width="16" />
+  <path
+    d="M136 92h156l84 84v232c0 18-14 32-32 32H136c-18 0-32-14-32-32V124c0-18 14-32 32-32z"
+    fill="#ffffff"
+  />
 
-  <rect x="136" y="150" width="180" height="24" rx="12" fill="#aeb7c8" opacity="0.85" />
-  <rect x="136" y="204" width="136" height="24" rx="12" fill="#aeb7c8" opacity="0.7" />
-  <rect x="136" y="258" width="120" height="24" rx="12" fill="#aeb7c8" opacity="0.55" />
+  <path
+    d="M292 92v60c0 13 11 24 24 24h60z"
+    fill="#dfe6ff"
+  />
 
-  <circle cx="356" cy="322" r="78" fill="url(#g)" />
+  <rect x="144" y="164" width="138" height="20" rx="10" fill="#9aa7d8"/>
+  <rect x="144" y="214" width="116" height="20" rx="10" fill="#9aa7d8"/>
+  <rect x="144" y="264" width="92" height="20" rx="10" fill="#9aa7d8"/>
+
+  <circle cx="352" cy="352" r="72" fill="#1f2b5e"/>
+
   <text
-    x="356"
-    y="342"
+    x="352"
+    y="374"
     text-anchor="middle"
     font-family="Arial, Helvetica, sans-serif"
-    font-size="64"
-    font-weight="800"
-    fill="#08111c"
+    font-size="52"
+    font-weight="700"
+    fill="#ffffff"
   >123</text>
 </svg>
