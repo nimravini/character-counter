@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Style Combo Generator</title>
+<style>
+:root{--bg:#120d22;--bg2:#071b2d;--card:rgba(255,255,255,.1);--card2:rgba(255,255,255,.16);--text:#fff7ff;--muted:#cabbe9;--muted2:#a999ca;--a:#ff79c6;--b:#8be9fd;--good:#a7f3d0;--warn:#ffd166;--border:rgba(255,255,255,.2);--shadow:rgba(0,0,0,.36)}*{box-sizing:border-box}body{margin:0;min-height:100svh;padding:10px;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at 8% 0%,rgba(255,121,198,.32),transparent 28%),radial-gradient(circle at 92% 0%,rgba(139,233,253,.22),transparent 34%),linear-gradient(135deg,var(--bg),var(--bg2))}.app{width:min(980px,100%);margin:0 auto;padding:clamp(16px,4vw,34px);border:1px solid var(--border);border-radius:26px;background:linear-gradient(180deg,var(--card),rgba(255,255,255,.055));box-shadow:0 24px 80px var(--shadow);backdrop-filter:blur(14px)}h1{margin:0 0 8px;font-size:clamp(2rem,9vw,4.5rem);line-height:.93;letter-spacing:-.08em}.intro{margin:0 0 18px;max-width:66ch;color:var(--muted);line-height:1.5}.grid{display:grid;gap:12px}.quick{grid-template-columns:1fr 118px;align-items:end;margin-bottom:12px}.actions{grid-template-columns:1fr 1fr;margin-bottom:16px}label{display:grid;gap:7px;color:var(--muted);font-size:.9rem;font-weight:850}select,input,button{font:inherit}select,input{width:100%;min-height:46px;border:1px solid var(--border);border-radius:999px;padding:0 14px;color:var(--text);background:rgba(255,255,255,.11);outline:none}option{color:#201331}button{min-height:46px;border:1px solid var(--border);border-radius:999px;padding:0 16px;cursor:pointer;color:#190d2b;background:var(--b);font-weight:950;box-shadow:0 8px 24px rgba(139,233,253,.18)}button.secondary{background:var(--a);box-shadow:0 8px 24px rgba(255,121,198,.19)}button.ghost{color:var(--text);background:rgba(255,255,255,.09);box-shadow:none}button.small{min-height:36px;padding:0 12px;font-size:.86rem}button.locked{background:var(--warn);color:#2a1c00}button:hover{filter:brightness(1.05);transform:translateY(-1px)}button:active{transform:translateY(1px) scale(.99)}button:focus-visible,select:focus,input:focus,summary:focus-visible{outline:3px solid rgba(139,233,253,.42);outline-offset:2px}.result{display:grid;gap:15px;min-height:158px;padding:clamp(16px,4vw,26px);border:1px solid var(--border);border-radius:22px;background:var(--card2)}.top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.title{margin:0;font-size:clamp(1.15rem,4vw,1.7rem);letter-spacing:-.04em}.badge{display:inline-flex;min-height:30px;align-items:center;border:1px solid var(--border);border-radius:999px;padding:4px 10px;color:var(--muted);background:rgba(255,255,255,.08);font-size:.82rem;font-weight:850}#output{margin:0;font-size:clamp(1rem,3.8vw,1.48rem);line-height:1.42;letter-spacing:-.025em;font-weight:820;overflow-wrap:anywhere}.slots{display:grid;gap:10px}.slot{display:grid;gap:10px;padding:12px;border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.075)}.slotHead{display:flex;justify-content:space-between;gap:8px;align-items:center}.slotLabel{color:var(--muted);font-size:.8rem;font-weight:950;text-transform:uppercase;letter-spacing:.08em}.slot p{margin:0;line-height:1.36;font-weight:760}.slotBtns,.pillRow{display:flex;gap:8px;flex-wrap:wrap}details{margin-top:14px;border:1px solid var(--border);border-radius:20px;background:rgba(255,255,255,.07);overflow:clip}summary{cursor:pointer;padding:15px 16px;font-weight:950;list-style:none}summary::-webkit-details-marker{display:none}summary:after{content:"▾";float:right;color:var(--b)}details[open] summary:after{transform:rotate(180deg)}.body{padding:0 16px 16px;color:var(--muted)}.settings{grid-template-columns:repeat(2,minmax(0,1fr))}.hint,.footer{color:var(--muted2);font-size:.86rem;line-height:1.42}.meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;color:var(--muted);font-size:.9rem}.toast{min-height:1.3em;color:var(--good);font-weight:950}.results{display:grid;gap:10px;max-height:360px;overflow:auto;padding-right:4px;margin-top:12px}.row{display:grid;gap:8px;padding:12px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.07)}.row p{margin:0;line-height:1.35;color:var(--text);font-weight:720}.excluded{opacity:.55}.hidden{display:none!important}@media(max-width:720px){.quick,.actions,.settings{grid-template-columns:1fr}button{width:100%}.slotBtns button,.pillRow button{width:auto;flex:1 1 auto}.app{border-radius:22px}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<main class="app">
+<h1>Style Combo Generator</h1>
+<p class="intro">Fast default: generate a plain numbered style combination and copy it. Advanced controls are tucked away for chaos, locks, cleaner copy formats, slot recipes, seeds, search, and session-only exclusions.</p>
+<section class="grid quick" aria-label="Quick controls"><label>Mode<select id="mode"></select></label><label>Count<select id="count"><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label></section>
+<section class="grid actions" aria-label="Main actions"><button id="gen">Generate</button><button id="copy" class="secondary">Copy</button></section>
+<section class="result" aria-live="polite" aria-atomic="true"><div class="top"><h2 id="title" class="title">3-Style Combination</h2><span id="badge" class="badge">Plain copy mode</span></div><p id="output">Click Generate to summon the style chimera.</p><div id="slots" class="slots"></div></section>
+<div class="meta"><span id="countNote"></span><span id="toast" class="toast"></span></div>
+<details><summary>Advanced generation controls</summary><div class="body"><div class="grid settings"><label>Slot recipe<select id="recipe"></select></label><label>Weirdness<select id="weird"><option value="harmonious">Harmonious</option><option value="interesting" selected>Interesting</option><option value="cursed">Cursed</option></select></label><label>Seed<input id="seed" type="text" placeholder="Optional, e.g. moon-biscuit-42" autocomplete="off"></label><label>Copy format<select id="fmt"><option value="plain" selected>Plain combo</option><option value="clean">Clean prompt</option><option value="chatgpt">ChatGPT image prompt</option><option value="short">Short prompt</option><option value="brief">Design brief</option><option value="midjourney">Midjourney-ish</option></select></label><label>Anti-greeble<select id="anti"></select></label><label>Lock controls<select id="slotView"><option value="compact" selected>Hide slot cards by default</option><option value="show">Show slot cards</option></select></label></div><p class="hint">Locks only affect future rolls. Plain copy stays plain unless you choose another copy format.</p><section class="grid actions" style="margin-top:14px;margin-bottom:0"><button id="copyClean" class="ghost">Copy clean prompt</button><button id="resetSeed" class="ghost">Reset seed sequence</button></section></div></details>
+<details><summary>Search styles and session exclusions</summary><div class="body"><div class="grid settings"><label>Search styles<input id="search" type="search" placeholder="Try poster, flat, furry, pixel, map..." autocomplete="off"></label><label>Exclusions<select id="filter"><option value="all" selected>Show all styles</option><option value="active">Only active styles</option><option value="excluded">Only excluded styles</option></select></label></div><section class="grid actions" style="margin-top:14px;margin-bottom:0"><button id="excludeCurrent" class="ghost">Exclude current combo</button><button id="clearExcluded" class="ghost">Clear exclusions</button></section><p class="hint" id="exNote">Excluded styles are session-only. Refreshing the page clears them.</p><div id="results" class="results"></div></div></details>
+<p class="footer">No prompts, history, favourites, or exclusions are saved. It is just this one HTML file doing quick maths in your browser.</p>
+</main>
+<script type="text/plain" id="rawStyles">
+1. Graffiti Bubble Letter Art Colorful, round street text.
+2. Seapunk Aesthetic Style Aquatic cyber colours, dolphins, shells, early-internet ocean surrealism.
+3. Kintsugi Ceramic Repair Style Cracked ceramic forms repaired with glowing gold seams.
+4. Flat Vector Avatar Style Clean, graphic-style character art.
+5. Needle-Felted Wool Sculpture Style Fuzzy handmade figures with soft sculpted texture.
+6. Soda Can Label Style Bright commercial packaging with mascot, bubbles, and product typography.
+7. 8-Bit Pixel Art Old-school, blocky pixel graphics.
+8. Windows Aero Glass Aesthetic.
+9. Ethereal Foggy Landscape Soft light with misty textures.
+10. Chibi / Kawaii Style Tiny, cute anime-inspired design.
+11. Manga Cover (Generic, Safe Style) Framed, energetic character.
+12. Haunted House Silhouette Scene Dark shadows and spook.
+13. Isometric Cityscape 3D-looking top-down digital art.
+14. Animation Background Painting Style Painted scenic backdrop, designed for characters to move through.
+15. Album Art Psychedelia (1970s) Wild swirls and textures.
+16. Dusty Vintage Postcard Look Faded color with handwritten font.
+17. Digital Marker Rendering Smooth, vibrant digital color.
+18. Expressionist Painting Bold, emotional brushstrokes.
+19. Tilt-Shift Photography Style Real scene made to resemble a scale model.
+20. Enamel Pin Design Style Simplified shiny shapes with metal outlines and merch-ready clarity.
+21. Nautical Chart Style Sea routes, compass roses, coastlines, mapmaker lettering.
+22. Scrapbook Family Album Look Mixed paper textures and frames.
+23. Grunge Album Cover Style Scratched, moody artwork.
+24. Mid-Century Modern Abstract Art Flat, funky shapes.
+25. 1920s Silent Film Poster Style Grainy vintage drama.
+26. Layered Mixed Media Brush Art Paint, ink, texture all-in-one.
+27. Mosaic Tile Artwork Tiled fragments forming a picture.
+28. Macramé Wall Hanging Style Knotted cord patterns forming decorative shapes.
+29. Risograph Print Style Grainy layered ink, limited colours, zine-adjacent charm.
+30. Stencil Art (Banksy-style) Flat, spray stencil silhouettes.
+31. Glam Magazine Cover Glossy, posed shot with magazine text.
+32. Russian Lubok Print Style Folk print narrative scenes with bold outlines and captions.
+33. Bokeh Photography-Inspired Art Blurry light spots for dreamy focus.
+34. Old-School Tattoo Flash Sheet Classic tattoo style layout.
+35. Sneaker Design Sheet Style Footwear concept art with side views, callouts, and material swatches.
+36. Etching Plate Illustration Style Fine engraved lines, antique printmaking detail.
+37. Pop Art (Andy Warhol-style) Repeating images with loud colors.
+38. Clay Tablet Cuneiform Style Pressed wedge marks, ancient record-keeping, baked clay texture.
+39. ASCII Art Style Image built entirely from typed characters and spacing.
+40. Synthwave Neon Dream Glowing pinks, blues, 80s vibes.
+41. Dark Academia Notebook Style Ink notes, old books, diagrams, candlelit study atmosphere.
+42. Ink Drip Abstract Spilled ink forming surreal shapes.
+43. Microscope Slide Illustration Style Cellular forms, transparent layers, lab-note precision.
+44. Cut Paper Collage Textured and layered shapes.
+45. Hergé-Inspired Ligne Claire Style Clean European adventure-comic linework with crisp colour fields.
+46. Sports Mascot Logo Style Fierce emblem character with bold team branding.
+47. Ink Tattoo Sleeve Art Style Detailed black line sleeve design.
+48. Fabric Patchwork Style Quilt-like colorful panels.
+49. Korean Minhwa Folk Painting Style Playful tigers, flowers, books, and symbolic flat colour.
+50. Aztec Codex Inspired Style Folded-manuscript look with pictographic symbols and bold flat colour.
+51. Art Brut / Outsider Art Vibe Raw, chaotic, expressive.
+52. Animated Character Turnaround Sheet 360 design of a character.
+53. Futurist Motion Painting Style Speed, machines, repeated forms, movement fractured into shapes.
+54. Candle-Lit Renaissance Portrait Soft shadow, oil-style painting.
+55. LEGO Minifigure Version Blocky characters in LEGO style.
+56. Papel Picado Cutout Style Festive pierced-paper banners with decorative negative space.
+57. Astronomical Observatory Plate Style Star maps, telescope notes, constellation markings.
+58. Analog VHS Screenshot Grainy retro screen image.
+59. Shimmering Digital Fantasy Armor Glowy RPG character gear.
+60. Old Pub Sign Painting Style Hand-painted signboard look with bold emblematic imagery.
+61. Brutalist Art Style Stark, bold, minimal structure.
+62. Black-Figure Greek Vase Style Terracotta pottery figures with black silhouette decoration.
+63. Pulp Horror Paperback Style Painted monsters, lurid shadows, lurid old book-cover drama.
+64. Astrology Chart Illustration Planets and symbols in rings.
+65. Vaporpunk Street Scene Neon-meets-grunge future city.
+66. Kandinsky-Inspired Abstract Style Musical geometry, floating circles, energetic colour rhythm.
+67. Cottagecore Garden Illustration Style Soft rural garden scenes, handmade objects, cosy plant abundance.
+68. Transit Map Style Coloured route lines, station dots, clean schematic geography.
+69. Neon Sign Design Style Tubes of glowing lettering and simple icon shapes.
+70. Porcelain Figurine Style Glossy collectible sculpture look with delicate painted details.
+71. Desert Punk / Post-Apocalyptic Grungy, dystopian survival look.
+72. Medieval Marginalia Creature Style Odd little manuscript beasts doing ridiculous border activities.
+73. Zine-Style Punk Poster Ripped collage with text.
+74. Esports Team Emblem Style Aggressive logo mark with sharp digital shapes and gamer branding.
+75. Satellite Thermal Imaging Style False-colour Earth-view imagery with scientific data overlays.
+76. Museum Exhibit Plaque Style Artifact image with accession labels, captions, and archival polish.
+77. Surreal Collage Montage Random images blended weirdly.
+78. Spreadsheet Art Style Cells, grids, conditional formatting, office-software visual wizardry.
+79. Illustrated Event Flyer Design Bold lines and party energy.
+80. Faux-Stained Glass Design Color-segmented leaded look.
+81. Cinematic Storyboard Style Sequential sketch frames with camera notes and motion arrows.
+82. Hyperreal Pencil Drawing Extremely detailed shading.
+83. Soft Pastel Landscape Powdery textures, light color.
+84. Gouache Children’s Book Illustration Soft, colorful storytelling art.
+85. 16-Bit Retro Game Style Smooth pixel graphics with more detail.
+86. De Stijl Grid Style Primary-colour rectangles, black grid lines, strict visual order.
+87. Magazine Mockup with Clean Grid Editorial layout with text.
+88. Studio Ghibli-inspired Illustration Soft, dreamy hand-drawn anime style.
+89. Retro 70s Infographic Style Muted colors, funky graphs.
+90. Rubber Stamp Print Style Repeated stamped shapes, uneven ink, crafty handmade look.
+91. Vintage Children's Storybook Old-timey, warm illustrations.
+92. Pinball Backglass Art Style Glossy arcade illustration, chrome highlights, dramatic characters and lights.
+93. Screenprinted Gig Poster Style Bold layered inks, concert-poster energy, rough registration edges.
+94. Comic Book Style (Generic) Bold ink lines and halftones.
+95. Biopunk Lab Specimen Style Organic science-fiction forms, tanks, membranes, strange biology.
+96. Mary Blair-Inspired Color Storyboard Style Bold colour blocks, playful shape language, whimsical staging.
+97. Klimt-Inspired Gold Ornament Style Pattern-heavy figures with gilded surfaces and decorative detail.
+98. Islamic Geometric Illumination Style Intricate repeating geometry with ornamental symmetry.
+99. Daguerreotype Portrait Style Highly polished antique photo surface with formal stillness.
+100. Monochrome Silhouette Art One-color figure outlines.
+101. Bubblegum Card Illustration Style Collectible card framing, printed texture, punchy character art.
+102. Digital Claymation Toy World 3D toylike fantasy setting.
+103. Colored Pencil Sketch on Kraft Paper Warm paper, soft color lines.
+104. Lithograph Advertising Style Soft old-commercial print texture with elegant illustrated products.
+105. Lofi Anime Vibe Soft grain, chill background.
+106. Cyanotype Sun Print Style Deep blue photographic silhouettes with botanical or object outlines.
+107. Airline Safety Card Style Calm instructional figures, simplified emergency diagrams.
+108. Double Exposure Portrait Style Face blended with landscape, architecture, or symbolic imagery.
+109. Gothic Victorian Dark, ornate historical style.
+110. Saul Bass-Inspired Title Card Style Cutout shapes, bold silhouettes, dramatic film-poster minimalism.
+111. Celtic Knotwork Manuscript Style Interlaced knots, decorative beasts, dense border ornament.
+112. Anita Jeram/”Guess How Much I Love You”-inspired watercolour book illustration.
+113. Byzantine Icon-Inspired Style Frontal figures, gold fields, solemn sacred geometry.
+114. Crochet Amigurumi Style Yarn-crafted character look with rounded stitched forms.
+115. Hilma af Klint-Inspired Spiritual Geometry Style Mystical diagrams, botanical symbols, luminous abstraction.
+116. Wet Plate Collodion Photo Style Antique portrait look with silver tones, blur, and plate flaws.
+117. Fantasy Creature Bestiary Page Creature with lore and stats.
+118. Blurred Motion Photo Illustration Speed lines, movement blur.
+119. Restaurant Menu Illustration Style Drawn dishes, decorative borders, specials-board charm.
+120. Persian Miniature-Inspired Style Fine detail, elegant gardens, patterned textiles, jewel-box composition.
+121. Matchbox Label Illustration Style Compact retro labels with bold borders and punchy mascots.
+122. Art Nouveau Poster Ornate, floral, flowing lines.
+123. Eyvind Earle-Inspired Landscape Style Decorative forests, graphic shadows, elegant patterned scenery.
+124. Light Painting Photography Style Long-exposure glowing trails drawn through darkness.
+125. Fantasy RPG Adventure Cover Epic game-style character poster.
+126. Custom Board Game Cover Style Bright, box-style artwork.
+127. Fantasy Book Cover (90s style) Over-the-top RPG book design.
+128. Zen Ink Brush Painting Minimalist East Asian brush style.
+129. Pastel Vaporwave Landscape Dreamy pastel digital setting.
+130. Mosaic Portrait Style Tiny tiles form a large face.
+131. Acrylic Paint Chunky Texture Style Thick painted effect.
+132. Cosmic Tarot Reading Scene Mystic glow with starlight.
+133. Heraldic Coat-of-Arms Style Shields, banners, symbolic animals, formal crest composition.
+134. Glitch Art / Datamosh Effect Broken TV or digital image.
+135. Stylized Folk Costume Drawing Traditional outfits as fashion.
+136. Mayan Stela Carving Style Stone-carved glyphs, ritual figures, weathered relief texture.
+137. Oil Pastel Drawing Chunky, colorful texture.
+138. Patent Drawing Style Precise object views, numbered labels, white-background invention diagrams.
+139. Sticker Bomb Collage Style Overlapping decals, bold icons, streetwear notebook chaos.
+140. Mosaic Icon Style Religious-icon composition made from glass tesserae and gold backgrounds.
+141. Architectural Blueprint Style Technical line drawings.
+142. Petroglyph Rock Art Style Scratched symbols and figures carved into weathered stone.
+143. Chalkboard Illustration Style White on black textured design.
+144. Steampunk Style Victorian-meets-sci-fi gear-heavy art.
+145. Carnival Sideshow Banner Style Hand-painted attractions, loud lettering, theatrical fairground exaggeration.
+146. Folk Art Primitive Naive, bold and colorful art.
+147. Linocut Poster Style Carved block-print shapes with chunky contrast and handmade edges.
+148. Fantasy Crystal Cavern Scene Glowing gems and magical rocks.
+149. Minimalist Flat Design Simple shapes with bright color.
+150. Dada Photomontage Style Cut-up photographs, absurd juxtapositions, chaotic printed fragments.
+151. Impressionist Oil Painting Brushy, light-filled traditional art.
+152. Retro-Futurist Transport Poster Jetsons-style travel promo.
+153. Claymation / Stop-Motion Look Textured, chunky 3D figures.
+154. Doodle Sketchbook Style Casual, fun pen drawings.
+155. Op Art Optical Illusion Style High-contrast patterns that wobble, pulse, and trick the eye.
+156. Generative Plotter Art Style Algorithmic pen lines, mathematical curves, clean plotted patterns.
+157. Playing Card Court Style Symmetrical royal character design with ornate suits and borders.
+158. Vaporwave Aesthetic Neon, retro, digital surrealism.
+159. Technical Cutaway Diagram Style Object sliced open to reveal labelled interior mechanisms.
+160. Cereal Box Mascot Style Breakfast-box character design with bold shelf-friendly graphics.
+161. X-Ray Illustration Style Translucent anatomy-like forms with glowing internal structure.
+162. Embossed Leather Book Cover Textured antique-style book.
+163. Cave Painting Inspired Style Earth pigments, hand marks, animal silhouettes, rough rock texture.
+164. Illustrated Recipe Card Layout Drawn food and steps.
+165. Weather Radar Map Style Storm bands, heat colours, broadcast-map visual language.
+166. Minimalist Contour Drawing Line-only facial outlines.
+167. De Chirico-Inspired Metaphysical Plaza Style Empty dreamlike squares, long shadows, eerie architecture.
+168. Architectural Watercolor Rendering Buildings with painterly texture.
+169. Charley Harper-Inspired Geometric Nature Style Birds, animals, and plants reduced to clever crisp shapes.
+170. UPA-Inspired Cartoon Style Angular mid-century animation look with flat shapes and clever staging.
+171. Indian Pichwai-Inspired Style Ornate devotional textile composition with cows, lotuses, and rich pattern.
+172. Ancient Scroll Ink Drawing Aged parchment look.
+173. Storybook Fantasy Map (Game Style) Drawn maps of lands.
+174. Cyberpunk Graffiti Alley Blade Runner with spray cans.
+175. Emergency Instruction Pictogram Style Simplified safety diagrams with direct action poses.
+176. Flat Infographic Character Profile Clean data-style person summary.
+177. Album Cover (Indie Rock Aesthetic) Artistic, grainy image.
+178. Pixar-style 3D Render 3D cartoon look with expressive faces.
+179. Retro Airline Poster Mid-century travel poster.
+180. Antique Anatomical Plate Style Medical textbook figure drawing with labelled body structures.
+181. Crosshatch Pen Illustration Layered ink shading lines.
+182. Light and Shadow Realism Contrasty photo-real art.
+183. Lowbrow Pop Surrealism Style Weird cute-grotesque characters, glossy colour, underground art energy.
+184. Suprematist Geometric Style Floating abstract forms with stark, theatrical simplicity.
+185. Ukiyo-e Japanese Woodblock Print Traditional Japanese print style.
+186. Neo-Memphis Design Geometric, colorful pop elements.
+187. Fractal Flame Art Style Recursive glowing forms, mathematical curls, cosmic abstraction.
+188. Trading Card Game Illustration Style Dynamic fantasy action framed like a collectible card.
+189. Pastel Art Nouveau cartoon.
+190. Wax Seal Emblem Style Raised seal design, heraldic shapes, stamped ceremonial finish.
+191. Hand-Stitched Embroidery Look Thread-like detail and charm.
+192. Macabre Victorian Mourning Portrait Creepy antique vibe.
+193. Nature Journal Sketch Style Field notes and drawn observations.
+194. Y2K Chrome Aesthetic Shiny, futuristic early-2000s style.
+195. Street Art / Graffiti Mural Urban spray-paint aesthetic.
+196. Spiritual Mandala Design Intricate symmetrical symbols.
+197. Vector Art Deco Style Sharp lines and elegant shapes.
+198. Holographic Foil Sticker Style Rainbow sheen, glossy highlights, sticker-sheet sparkle.
+199. Cyberdelic Rave Flyer Style Club-poster chaos, chrome type, acid colour, digital hallucination.
+200. Art Deco Glam Geometric, gold-accented vintage style.
+201. Cubist (Picasso-style) Abstract, geometric figure art.
+202. Neumorphism UI Style Soft raised interface panels, subtle shadows, pillowy digital controls.
+203. Origami Folded Paper Style Sharp paper folds creating animals, objects, or scenes.
+204. Micro-Detail Insect Illustration Scientific-level bug art.
+205. Egyptian Tomb Painting Inspired Style Profile figures, symbolic scale, flat ceremonial colour.
+206. Wayfinding Signage Style Public-information icons, arrows, colour-coded navigation.
+207. Vaporwave Classical Bust Collage Retro remix of statues.
+208. Dreamcore Visual Style Hazy, nostalgic, slightly eerie scenes.
+209. Botanical Garden Plate Illustration Scientific flower drawing.
+210. Charcoal Portrait Sketch Smudgy, expressive black drawing.
+211. Watercolor Portrait Gentle, flowing paint portrait.
+212. Bauhaus Graphic Poster Simple, geometric modernism.
+213. Fantasy Fairy Tale Illustration Dreamy, storybook-like visuals.
+214. Ex Libris Bookplate Style Elegant personal library label with symbolic borders and initials.
+215. Grainy Film Snapshot Old camera aesthetic.
+216. Model Kit Box Art Style Exploded action scenes, detailed machines, hobby-shop packaging drama.
+217. Cloudcore Aesthetic Soft dreamy floating cloud visuals.
+218. Vintage Travel Poster Retro print with bold fonts and colors.
+219. Moebius-Inspired Sci-Fi Line Art Style Intricate surreal science-fiction worlds with delicate ink detail.
+220. Infrared Photography Style Pale foliage, dark skies, uncanny photographic colour shifts.
+221. Whimsical Miniature Diorama Tiny world built with detail.
+222. Noir Detective Poster Moody, shadow-heavy mystery tone.
+223. Expressionist Face Study Distorted faces with emotion.
+224. Scrimshaw Engraving Style Fine nautical line art etched into ivory-like material.
+225. Topographic Map Art Layered elevation look.
+226. Fantasy Potion Label Design Drawn bottle and label artwork.
+227. Thermographic Heatmap Style Heat-camera colours showing temperature-like gradients.
+228. Typographic Poster Art Words as bold design elements.
+229. Solarpunk Botanical City Style Green architecture, sunlight, community tech, abundant plant life.
+230. Comic Strip Newspaper Panel Multi-frame humor scene.
+231. Quilling Paper Filigree Style Rolled paper curls forming ornate dimensional designs.
+232. Cassette Futurism Interface Style Clunky retro tech panels, tapes, buttons, beige-machine nostalgia.
+233. Mughal Miniature-Inspired Style Courtly figures, detailed architecture, refined pattern and colour.
+234. Toile de Jouy Fabric Print Style Single-colour pastoral scenes repeated across fabric.
+235. Macro Photography Inspired Style Extreme close-up detail with shallow focus and texture drama.
+236. Whimsical Platformer Game Style Colorful video game level world.
+237. Retro Polaroid Frame Art Soft tone inside instant photo frame.
+238. Cinematic Film Still (Generic) Movie scene look with lighting.
+239. Alebrije Sculpture Style Fantastical animals covered in vivid decorative patterns.
+240. Norse Rune Stone Style Carved serpentine patterns, runic bands, weathered stone surface.
+241. Marquetry Wood Inlay Style Image built from polished wood-grain shapes and tonal inlays.
+242. Monoline Icon Illustration Single line vector symbols.
+243. Newspaper Comic Puzzle Page Humorous black-and-white filler style.
+244. Letterpress Broadside Style Pressed ink, vintage type, handmade print texture.
+245. Ink & Wash Drawing Loose ink line and watercolor.
+246. Expressionist Woodcut Print Rough carving-inspired lines.
+247. Pulp Adventure Magazine Style Daring poses, dramatic skies, treasure-map danger and action.
+248. Peanuts-style Cartoon Simple, bold lines with quirky expressions.
+249. Psychedelic 60s Poster Art Swirly, vibrant, retro visuals.
+250. Vapor Trails and Neon Skies Futuristic speed and light scenery.
+251. Ottoman Tile Pattern Style Floral ceramics, cobalt blues, repeating decorative motifs.
+252. Bold Flat Pop-Illustration Solid colors and big shapes.
+253. Retro Sci-Fi Poster 1950s-style futuristic theme.
+254. Majolica Ceramic Style Bright glazed pottery patterns with raised decorative colour.
+255. Digital Papercut / Layered Design Paper texture and depth.
+256. Celestial Navigation Chart Style Nautical-sky diagram with stars, bearings, and plotted arcs.
+257. Mixed-Media Scrapbook Style Layered paper, tape, texture.
+258. Augmented Reality Hologram Style Digital overlays and glowing effects.
+259. Animated Avatar Style (Generic) Cartoony and modern.
+260. Minimal Portrait on Color Block Background Simple face, bold backdrop.
+261. Medieval Illuminated Manuscript Style Gold borders, ornate initials, sacred-book decoration.
+262. Retro PC Game Box Art Old-style video game packaging.
+263. Digital Spray Paint Texture Art Layered digital street art.
+264. Fantasy Tarot Card Illustration Mystic characters in frames.
+265. Constructivist Poster Style Red-black geometry, heroic angles, punchy propaganda-poster drama.
+266. Toy Blister Pack Style Character shown as a packaged collectible with accessories and card backing.
+267. Inkblot Rorschach Abstract Symmetrical ink pattern.
+268. Surrealist Dreamscape Weird, dreamlike visuals.
+269. Cross-Stitch Pattern Style Pixel-like thread squares, craft grid, sampler feel.
+270. Rubber Hose Animation Style 1930s cartoon limbs, bendy poses, theatrical expressions.
+271. Kirigami Pop-Up Card Style Folded paper engineering with cut shapes rising from the page.
+272. High-Fashion Editorial Sketch Stylized fashion illustration.
+273. Pastel Illustration (Soft, Whimsical) Gentle colors and soft lines.
+274. Swiss International Typographic Style Clean grids, sans-serif type, disciplined modern layout.
+275. Old Newspaper Print Style Faded halftone black and white.
+276. Mid-2000s DeviantArt Vibe Dramatic fan-style digital art.
+277. Talavera Tile Style Hand-painted ceramic tile motifs with bold borders and colour.
+278. Mexican Retablo-Inspired Style Small devotional painting format with folk figures and handwritten captions.
+279. Backlit Shadow Silhouettes Figures with light behind.
+280. Delft Blue Ceramic Style Blue-and-white painted pottery scenes with crisp decorative borders.
+</script>
+<script>
+const $=id=>document.getElementById(id);
+const STYLES=$('rawStyles').textContent.trim().split(/\n+/).map(s=>s.replace(/^\s*\d+\.\s*/, '').replace(/\.+$/,'').trim());
+const FLAT=[1,4,7,20,21,24,30,46,52,56,61,68,69,74,78,79,80,86,45,107,110,121,133,149,165,166,169,170,175,176,179,184,186,197,205,206,212,225,228,230,242,243,248,252,253,259,260,265,274,279].map(n=>STYLES[n-1]);
+const GROUPS={soft:['kawaii','chibi','pastel','soft','storybook','children','cottagecore','cloudcore','lofi','gouache','watercolor','watercolour','whimsical','cute','toy','amigurumi','fairy tale','miniature','jeram'],retro:['retro','vintage','old','1970','70s','60s','1950','1920','polaroid','daguerreotype','wet plate','silent film','vhs','cassette','y2k','newspaper','pulp','airline','postcard','pinball','matchbox','rubber hose'],cyber:['cyber','neon','vapor','vapour','synth','glitch','datamosh','hologram','aero','y2k','digital','seapunk','thermal','satellite','radar','spreadsheet','ui','fractal','cassette futurism','chrome','augmented'],print:['poster','print','risograph','linocut','screenprinted','lithograph','letterpress','stencil','magazine','infographic','typographic','logo','emblem','label','flyer','card','packaging','sign','art deco','bauhaus','swiss','constructivist','vector','flat','broadside'],craft:['felt','ceramic','clay','crochet','embroidery','cross-stitch','macramé','patchwork','tile','stained glass','quilling','origami','kirigami','wood','leather','wax','stamp','paper','cutout','scrapbook','amigurumi','marquetry','needle','papel','majolica','delft','talavera'],history:['medieval','ancient','egyptian','greek','byzantine','persian','mughal','mayan','aztec','norse','ottoman','celtic','islamic','russian','minhwa','folk','retablo','lubok','pichwai','ukiyo','tomb','codex','cuneiform','scroll','manuscript','renaissance','illuminated','scrimshaw','stela'],photo:['photography','photo','portrait','snapshot','film still','cinematic','bokeh','tilt-shift','x-ray','infrared','light painting','double exposure','macro','realism','hyperreal','daguerreotype','wet plate','motion'],info:['map','chart','blueprint','patent','diagram','infographic','technical','observatory','topographic','transit','safety card','instruction','pictogram','wayfinding','exhibit plaque','journal','recipe','cutaway','navigation','radar'],character:['avatar','manga','comic','character','mascot','rpg','game','pixar','lego','turnaround','trading card','rubber hose','peanuts','minifigure','creature','bestiary','anime','claymation','platformer','furry','board game'],weird:['haunted','horror','macabre','noir','dreamcore','surreal','outsider','dada','inkblot','gothic','post-apocalyptic','biopunk','lowbrow','de chirico','metaphysical','grunge','dark academia'],nature:['landscape','garden','botanical','nature','insect','cloud','celestial','astronomical','cosmic','fairy tale','cavern','potion','observatory','star','solarpunk','nautical','seapunk','beach','flower']};
+const MODE_LABELS={all:'Everything',flat:'Flat Colour / Low-Greeble',soft:'Soft / Cute / Cosy',retro:'Retro / Vintage',cyber:'Cyber / Neon / Digital',print:'Print / Poster / Graphic Design',craft:'Craft / Material / Handmade',history:'Historical / Folk / Sacred',photo:'Photo / Cinematic',info:'Maps / Diagrams / Info',character:'Characters / Comics / Games',weird:'Dark / Weird / Surreal',nature:'Nature / Landscape / Cosmic'};
+const RECIPES={random:{label:'Random styles',roles:['Style','Style','Style','Style','Style'],groups:[]},base:{label:'Base + Medium + Format',roles:['Base style','Medium / texture','Format'],groups:[['print','character','soft','retro','cyber','history'],['craft','photo','print','nature'],['info','print','character','retro']]},char:{label:'Character design',roles:['Character language','Finish','Presentation'],groups:[['character','soft','history'],['print','craft','photo','cyber'],['print','info','retro']]},graphic:{label:'Graphic design',roles:['Graphic system','Print flavour','Layout'],groups:[['print','cyber','retro'],['print','craft','history'],['info','print']]},scene:{label:'Scene builder',roles:['World / scene','Atmosphere','Presentation'],groups:[['nature','weird','cyber','history'],['photo','soft','weird','retro'],['print','photo','info','character']]}};
+const ANTI={off:{label:'Off',suffix:''},light:{label:'Light Cleanup',suffix:'Use clear visual hierarchy, readable shapes, clean surfaces, controlled texture, and no visual artifacts.'},standard:{label:'Anti-Greeble',suffix:'Prioritise clean silhouettes, readable shapes, deliberate detail placement, smooth surfaces, controlled texture, clear lighting, and an uncluttered background. Avoid unnecessary micro-detail, gritty overlay, tiled texture, cellular patterning, random particles, muddy surface noise, artificial grain, or visual artifacts.'},strict:{label:'Strict Anti-Greeble',suffix:'Use simplified forms, crisp silhouettes, clean edges, broad readable shapes, smooth lighting, restrained surface detail, and a clear focal hierarchy. Remove unnecessary particles, fog, smoke, glitter, grunge, dirt, weathering, distressed surfaces, dense foliage, noisy fur strands, excessive feather detail, chaotic markings, and decorative clutter unless they are essential to the concept. No speckled noise, gritty overlay, tiled texture, cellular pattern, random particles, muddy micro-detail, artificial grain, or visual artifacts.'},flat:{label:'Flat Colour / Low-Greeble',suffix:'Use flat colours, clean edges, simple readable silhouettes, bold graphic shapes, minimal shading, restrained detail, and no texture noise. Keep the design clear, uncluttered, and easy to read at a glance.'},img:{label:'Img2Img-Safe',suffix:'Preserve the core composition, subject, pose, mood, silhouette, major design elements, and overall visual identity from the reference. Simplify fine surface detail, reduce background density, keep ornamentation large-scale and deliberate, smooth shadow regions, and avoid adding extra decorative microtexture. Use clean reflections, broad readable veining or markings where relevant, controlled atmosphere, and stable silhouettes. Do not enhance the whole frame with extra texture, grunge, dirt, particles, glitter, ash, dust, debris, sparkle effects, or unnecessary detail. No speckled noise, gritty overlay, tiled texture, cellular pattern, random particles, muddy micro-detail, artificial grain, or visual artifacts.'},lush:{label:'Keep It Lush, But Controlled',suffix:'Keep the richness, mood, atmosphere, and decorative identity, but make the detail controlled and readable. Use broad shapes, restrained surface detail, smooth atmospheric depth, clean lighting falloff, stable silhouettes, coherent reflections, and deliberate ornament placement. Avoid busy reflections, dense veining, broken-up distance detail, scattered branches or floral clutter, loose particle effects, glittering fog, gritty texture, or visual noise across every surface.'}};
+const els={mode:$('mode'),count:$('count'),gen:$('gen'),copy:$('copy'),title:$('title'),badge:$('badge'),out:$('output'),slots:$('slots'),note:$('countNote'),toast:$('toast'),recipe:$('recipe'),weird:$('weird'),seed:$('seed'),fmt:$('fmt'),anti:$('anti'),slotView:$('slotView'),copyClean:$('copyClean'),resetSeed:$('resetSeed'),search:$('search'),filter:$('filter'),excludeCurrent:$('excludeCurrent'),clearExcluded:$('clearExcluded'),exNote:$('exNote'),results:$('results')};
+let current=[],locked=[],seedStep=0;const excluded=new Set();const norm=s=>String(s||'').toLowerCase();const unique=a=>[...new Set(a)].filter(Boolean);const active=a=>a.filter(s=>!excluded.has(s));const groupPool=k=>STYLES.filter(s=>GROUPS[k].some(w=>norm(s).includes(norm(w))));
+function hash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}function mul(seed){return function(){let t=seed+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}function rng(x=''){const s=els.seed.value.trim();return s?mul(hash(`${s}|${seedStep}|${x}`)):Math.random}
+function modePool(){let v=els.mode.value,p=v==='all'?STYLES:v==='flat'?FLAT:groupPool(v);return active(unique(p))}function fallback(){return active(STYLES)}function choose(pool,r,used=new Set()){let p=active(unique(pool)).filter(s=>!used.has(s));if(!p.length)p=fallback().filter(s=>!used.has(s));if(!p.length)p=fallback();return p[Math.floor(r()*p.length)]||null}
+function slotPool(i,count,r){const rec=RECIPES[els.recipe.value],w=els.weird.value,base=modePool();if(els.recipe.value==='random'){if(w==='cursed'){const keys=Object.keys(GROUPS),k=keys[(i+Math.floor(r()*keys.length))%keys.length];return groupPool(k)}return base.length>=count?base:fallback()}const groups=rec.groups[i%rec.groups.length]||[];if(w==='harmonious'){const inter=base.filter(s=>groups.some(k=>GROUPS[k].some(x=>norm(s).includes(norm(x)))));return inter.length?inter:base}if(w==='cursed'){const keys=Object.keys(GROUPS).filter(k=>!groups.includes(k)),k=keys[(i+Math.floor(r()*keys.length))%keys.length];return groupPool(k)}return unique(groups.flatMap(groupPool))}
+function sync(){const c=+els.count.value;locked=Array.from({length:c},(_,i)=>!!locked[i]);current=Array.from({length:c},(_,i)=>current[i]||null)}function combo(){return current.filter(Boolean).map(s=>s.replace(/\.+$/,'').trim()).join(' + ')}
+function render(){const c=+els.count.value;els.title.textContent=`${c}-Style Combination`;els.out.textContent=combo()||'Click Generate to summon the style chimera.';const show=els.slotView.value==='show'||locked.some(Boolean);els.slots.classList.toggle('hidden',!show);els.slots.innerHTML='';if(!show)return;current.forEach((s,i)=>{const rec=RECIPES[els.recipe.value],role=(rec.roles[i]||`Style ${i+1}`),card=document.createElement('article');card.className='slot';card.innerHTML=`<div class="slotHead"><span class="slotLabel">${i+1} · ${role}</span></div><p></p><div class="slotBtns"></div>`;card.querySelector('p').textContent=s||'Empty slot';const head=card.querySelector('.slotHead'),btns=card.querySelector('.slotBtns'),lock=document.createElement('button');lock.className=`small ${locked[i]?'locked':'ghost'}`;lock.textContent=locked[i]?'Locked':'Lock';lock.onclick=()=>{locked[i]=!locked[i];render()};head.append(lock);const reroll=document.createElement('button');reroll.className='small ghost';reroll.textContent='Reroll slot';reroll.onclick=()=>rerollSlot(i);const ex=document.createElement('button');ex.className='small ghost';ex.textContent='Exclude';ex.onclick=()=>{if(s){excluded.add(s);locked[i]=false;rerollSlot(i);renderSearch();updateNote()}};btns.append(reroll,ex);els.slots.append(card)})}
+function generate(){sync();const r=rng('combo'),used=new Set(current.filter((s,i)=>locked[i]&&s));for(let i=0;i<current.length;i++){if(locked[i]&&current[i])continue;current[i]=choose(slotPool(i,current.length,r),r,used);if(current[i])used.add(current[i])}seedStep++;els.toast.textContent='';render();updateNote();updateBadge()}
+function rerollSlot(i){sync();const r=rng('slot-'+i),used=new Set(current.filter((s,n)=>n!==i&&s));current[i]=choose(slotPool(i,current.length,r),r,used);locked[i]=false;seedStep++;render();updateNote()}
+function updateNote(){const p=modePool();els.note.textContent=`${MODE_LABELS[els.mode.value]}: ${p.length} active styles · ${excluded.size} excluded this session`;els.exNote.textContent=`Excluded styles are session-only. Refreshing the page clears them. Currently excluded: ${excluded.size}.`}function updateBadge(){const f=els.fmt.options[els.fmt.selectedIndex].textContent,a=ANTI[els.anti.value].label;els.badge.textContent=els.fmt.value==='plain'?'Plain copy mode':`${f} · ${a}`}
+function prompt(format=els.fmt.value){const c=combo(),s=ANTI[els.anti.value].suffix;if(!c)return'';if(format==='plain')return c;if(format==='clean')return['Create an image combining these styles:',c,s].filter(Boolean).join(' ');if(format==='chatgpt')return['Create an image using a hybrid visual style that combines:',c+'.','Keep the composition readable, the subject clear, and the style blend coherent.',s].filter(Boolean).join(' ');if(format==='short')return[c,s||'clean composition, readable shapes'].filter(Boolean).join(', ');if(format==='brief')return['Visual direction:',c+'.','Design priorities: clear focal hierarchy, coherent composition, readable shapes, controlled detail, and a consistent finish.',s].filter(Boolean).join(' ');if(format==='midjourney')return`${c}, cohesive composition, clear subject, readable shapes${s?', '+s:''}`;return c}
+async function copyText(t,msg='Copied!'){if(!t.trim()){generate();t=prompt()}try{await navigator.clipboard.writeText(t);els.toast.textContent=msg}catch(e){const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.append(ta);ta.select();try{document.execCommand('copy');els.toast.textContent=msg}catch(_){els.toast.textContent='Copy failed. Select the text manually.'}ta.remove()}setTimeout(()=>els.toast.textContent='',1700)}
+function renderSearch(){const q=norm(els.search.value.trim()),f=els.filter.value;els.results.innerHTML='';let m=STYLES.filter(s=>{const ex=excluded.has(s);return(!q||norm(s).includes(q))&&(f==='all'||(f==='active'&&!ex)||(f==='excluded'&&ex))}).slice(0,80);if(!m.length){els.results.innerHTML='<p class="hint">No matching styles found.</p>';return}m.forEach(s=>{const ex=excluded.has(s),row=document.createElement('article');row.className='row '+(ex?'excluded':'');const p=document.createElement('p');p.textContent=s;const pills=document.createElement('div');pills.className='pillRow';const tog=document.createElement('button');tog.className='small ghost';tog.textContent=ex?'Include':'Exclude';tog.onclick=()=>{ex?excluded.delete(s):excluded.add(s);renderSearch();render();updateNote()};const use=document.createElement('button');use.className='small ghost';use.textContent='Use in slot 1';use.onclick=()=>{sync();current[0]=s;locked[0]=true;render();els.toast.textContent='Added to slot 1 and locked.';setTimeout(()=>els.toast.textContent='',1500)};pills.append(tog,use);row.append(p,pills);els.results.append(row)})}
+Object.entries(MODE_LABELS).forEach(([v,l])=>els.mode.add(new Option(l,v)));Object.entries(RECIPES).forEach(([v,r])=>els.recipe.add(new Option(r.label,v)));Object.entries(ANTI).forEach(([v,a])=>els.anti.add(new Option(a.label,v)));els.mode.value='all';els.recipe.value='random';els.anti.value='off';
+els.gen.onclick=generate;els.copy.onclick=()=>copyText(prompt());els.copyClean.onclick=()=>copyText(prompt('clean'),'Clean prompt copied!');els.resetSeed.onclick=()=>{seedStep=0;els.toast.textContent='Seed sequence reset.';setTimeout(()=>els.toast.textContent='',1500)};els.excludeCurrent.onclick=()=>{current.filter(Boolean).forEach(s=>excluded.add(s));locked=locked.map(()=>false);renderSearch();updateNote();generate()};els.clearExcluded.onclick=()=>{excluded.clear();renderSearch();updateNote();els.toast.textContent='Exclusions cleared.';setTimeout(()=>els.toast.textContent='',1500)};['mode','count','recipe','weird'].forEach(id=>$(id).addEventListener('change',generate));['fmt','anti'].forEach(id=>$(id).addEventListener('change',updateBadge));els.slotView.onchange=render;els.search.oninput=renderSearch;els.filter.onchange=renderSearch;document.addEventListener('keydown',e=>{const typing=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);if(e.key==='Enter'&&!typing&&!e.altKey&&!e.ctrlKey&&!e.metaKey)generate();if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'&&!typing&&!getSelection().toString()){e.preventDefault();copyText(prompt())}});renderSearch();generate();
+</script>
+</body>
+</html>
